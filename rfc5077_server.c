@@ -25,7 +25,7 @@ typedef struct {
     u_char                  hmac_key[16];
 } ssl_ticket_key_t;
 
-
+static int a = 0;
 static ssl_ticket_key_t     keys[3];
 
 
@@ -112,13 +112,13 @@ int main(int argc, const char *argv[])
         SSL_free(ssl);
         close(fd);
 
-        /*if(i % 5 == 0) {
+        if(i % 5 == 0) {
             memcpy(keys[2].name, keys[1].name, 48);
             memcpy(keys[1].name, keys[0].name, 48);
             RAND_pseudo_bytes(keys[0].name, 48);
 
             printf("update tickets\n");
-        }*/
+        }
     }
 
     close(s);
@@ -127,7 +127,7 @@ int main(int argc, const char *argv[])
     return 0;
 }
 
-static int a = 0;
+
 static int ssl_session_ticket_key_callbacke(SSL *ssl, unsigned char *name,
     unsigned char *iv, EVP_CIPHER_CTX *ectx, HMAC_CTX *hctx, int enc)
 {
@@ -156,11 +156,8 @@ static int ssl_session_ticket_key_callbacke(SSL *ssl, unsigned char *name,
         HMAC_Init_ex(hctx, keys[i].hmac_key, 16, EVP_sha256(), NULL);
         EVP_DecryptInit_ex(ectx, EVP_aes_128_cbc(), NULL, keys[i].aes_key, iv);
 
-        // printf("decrypt by key %d\n", i);
-
-        if(a % 5 == 0) {
-            printf("ask renew ticket\n");
-            return 2;
+        if(i != 0) {
+            printf("renew a ticket\n");
         }
 
         return (i == 0) ? 1 : 2;

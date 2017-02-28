@@ -96,14 +96,6 @@ int main(int argc, const char *argv[])
 
         SSL_accept(ssl);
 
-        session = SSL_get0_session(ssl);
-        sprintf(buf, "/home/fishlegs/Workspaces/tengine/test/sessions/%d.txt", i);
-        FILE            *fp;
-
-        fp = fopen(buf, "w");
-        SSL_SESSION_print_fp(fp, session);
-        fclose(fp);
-
         SSL_read(ssl, buf, 1024);
 
         SSL_write(ssl, response, strlen(response));
